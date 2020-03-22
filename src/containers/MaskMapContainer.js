@@ -94,13 +94,40 @@ const MaskMapContainer = props => {
       >
         
 		{/** 검색결과 데이터 수 만큼 목록의 아이템을 표시함 */}
-		{result.map((item, index) => (
-			<Overlay key={index}
-			longitude={item.lng}
-			latitude={item.lat}
-			content={`!!!!!!!!!!!!!!!!`}
-		  />
-		))}
+		{result.map((item, index) => {
+		
+			// 100개 이상(녹색): 'plenty' / 30개 이상 100개미만(노랑색): 'some' / 2개 이상 30개 미만(빨강색): 'few' / 1개 이하(회색): 'empty' / 판매중지: 'break'
+			let color = null, state = null;
+
+			switch (item.remain_stat) {
+				case 'plenty':
+					color = 'green';
+					state = '100개 이상';
+					break;
+				case 'some':
+					color = 'yellow';
+					state = '30개 이상 100개 미만';
+					break;
+				case 'few':
+					color = 'red';
+					state = '2개 이상 30개 미만';
+					break;
+				case 'empty':
+					color = 'grey';
+					state = '1개 이하';
+					break;
+				default:
+					color = 'black';
+					state = '판매중단';
+			}
+
+			return(<Marker key={index}
+					longitude={item.lng}
+					latitude={item.lat}
+					title={item.name}
+					onClick={() => { alert(`${item.name} , ${state}`); }}
+				/>);
+		})}
       </Map>
     </MapBox>
   );
