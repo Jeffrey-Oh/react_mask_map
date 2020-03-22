@@ -124,8 +124,7 @@ const MaskMapContainer = props => {
 			return(<Marker key={index}
 					longitude={item.lng}
 					latitude={item.lat}
-					title={item.name}
-					onClick={() => { alert(`${item.name} , ${state}`); }}
+					onClick={() => { alert(`${item.name} / ${state}`); }}
 				/>);
 		})}
       </Map>
