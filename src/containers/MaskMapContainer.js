@@ -45,14 +45,12 @@ const MaskMapContainer = props => {
     console.warn('ERROR(' + err.code + '): ' + err.message);
   };
 
-  navigator.geolocation.getCurrentPosition(geo_success, geo_error, options);
-  
   // geolocation을 통해 위, 경도값 받기
   if (props.coords) {
 	  pos.lat = props.coords.latitude;
 	  pos.lng = props.coords.longitude;
   } else {
-    
+    navigator.geolocation.getCurrentPosition(geo_success, geo_error, options);
   }
 
   // 위치정보를 상태값으로 등록
