@@ -91,11 +91,11 @@ const MaskMapContainer = props => {
   }
 
   if (loading) {
-	  return <h2 style={{ paddingTop: '36px', color: '#00f' }}>검색중입니다...</h2>;
+	  // return <h2 style={{ paddingTop: '36px', color: '#00f' }}>검색중입니다...</h2>;
   }
 
   if (error) {
-	  return <h2 style={{ paddingTop: '36px', color: '#f00' }}>{error}</h2>;
+	  // return <h2 style={{ paddingTop: '36px', color: '#f00' }}>{error}</h2>;
   }
 
   return (
