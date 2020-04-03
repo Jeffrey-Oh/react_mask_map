@@ -26,7 +26,7 @@ const MapBox = styled.div`
 
 const MaskMapContainer = props => {
   // 지도에 적용할 위도, 경도값 추출
-  const pos = { lat: 37.4846258, lng: 126.8998570 };
+  const pos = { lat: 37.485364210938236, lng: 126.89935858146922 };
 
   // geolocation을 통해 위, 경도값 받기
   if (props.coords) {
@@ -95,7 +95,6 @@ const MaskMapContainer = props => {
             lat : center.Ha,
             lng : center.Ga
           });
-          
         }}
         center={{
           longitude: position.lng,
