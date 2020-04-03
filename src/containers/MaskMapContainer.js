@@ -28,10 +28,31 @@ const MaskMapContainer = props => {
   // 지도에 적용할 위도, 경도값 추출
   const pos = { lat: 37.485355200868526, lng: 126.89935859355552 };
 
+  const options = {
+    enableHighAccuracy: true, // 높은 정확도 사용
+    maximumAge: 0, // 캐시유효시간(사용안함)
+    timeout: Infinity // 타임아웃(무한대로 설정)
+  };
+
+  function geo_success(res_pos) {
+    const crd = res_pos.coords;
+
+    pos.lat = crd.latitude;
+    pos.lng = crd.longitude;
+  };
+
+  function geo_error(err) {
+    console.warn('ERROR(' + err.code + '): ' + err.message);
+  };
+
+  navigator.geolocation.getCurrentPosition(geo_success, geo_error, options);
+  
   // geolocation을 통해 위, 경도값 받기
   if (props.coords) {
 	  pos.lat = props.coords.latitude;
 	  pos.lng = props.coords.longitude;
+  } else {
+    
   }
 
   // 위치정보를 상태값으로 등록
