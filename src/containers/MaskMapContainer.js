@@ -26,7 +26,7 @@ const MapBox = styled.div`
 
 const MaskMapContainer = props => {
   // 지도에 적용할 위도, 경도값 추출
-  const pos = { lat: 37.502604, lng: 127.024943 };
+  const pos = { lat: 37.4846258, lng: 126.8998570 };
 
   // geolocation을 통해 위, 경도값 받기
   if (props.coords) {
@@ -52,6 +52,11 @@ const MaskMapContainer = props => {
   React.useEffect( () => {
 	  dispatch(maskMapModule.maskAsync(position.lat, position.lng));
   }, []);
+
+  /** 지도 이동 시 Ajax 연동 */
+  React.useEffect( () => {
+	  dispatch(maskMapModule.maskAsync(position.lat, position.lng));
+  }, [position]);
 
   /** 위치 정보 사용 가능 여부 확인 */
   if (!props.isGeolocationAvailable) {
@@ -86,6 +91,11 @@ const MaskMapContainer = props => {
         //지도에 표시되는 위치가 변경된 경우
         onDragEnd={map => {
           const center = map.getCenter();
+          setPosition({
+            lat : center.Ha,
+            lng : center.Ga
+          });
+          
         }}
         center={{
           longitude: position.lng,
