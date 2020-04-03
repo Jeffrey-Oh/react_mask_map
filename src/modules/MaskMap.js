@@ -25,7 +25,7 @@ export const searchFailureAction   = createAction(SEARCH_FAILURE);
  * 컴포넌트에서 다루고자 하는 데이터들을 포함한다.
  */
 const initialState = {
-    result: [],         // 뉴스목록
+    result: [],         // 약국목록
     loading: false,     // 현재 검색중인지 여부
     error: false        // 에러 발생 여부
 };
