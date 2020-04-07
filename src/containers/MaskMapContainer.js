@@ -91,7 +91,33 @@ const MaskMapContainer = props => {
   }
 
   if (loading) {
-	  return <h2 style={{ paddingTop: '36px', color: '#00f' }}>검색중입니다...</h2>;
+    // return <h2 style={{ paddingTop: '36px', color: '#00f' }}>검색중입니다...</h2>;
+    
+    return (
+    <MapBox>
+      <Map
+        kakaoApiKey="680ab974e5cb1353034d6d7f21f2ec44"
+        initialPosition={{
+          longitude: position.lng,
+          latitude: position.lat,
+          level: 10
+        }}
+        //지도에 표시되는 위치가 변경된 경우
+        onDragEnd={map => {
+          const center = map.getCenter();
+          setPosition({
+            lat : center.Ha,
+            lng : center.Ga
+          });
+        }}
+        center={{
+          longitude: position.lng,
+          latitude: position.lat
+        }}
+      >
+      </Map>
+    </MapBox>
+    )
   }
 
   if (error) {
