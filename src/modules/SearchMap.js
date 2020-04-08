@@ -7,9 +7,9 @@ import axios from 'axios';
  * Ajax 연동 기능 하나당 3개의 액션 정의
  * --> 목록을 가져오는 중, 목록 가져오기 성공, 목록 가져오기 실패
  */
-const SEARCH = 'maskMap/SEARCH';
-const SEARCH_SUCCESS = 'maskMap/SEARCH_SUCCESS';
-const SEARCH_FAILURE = 'maskMap/SEARCH_FAILURE';
+const SEARCH = 'searchMap/SEARCH';
+const SEARCH_SUCCESS = 'searchMap/SEARCH_SUCCESS';
+const SEARCH_FAILURE = 'searchMap/SEARCH_FAILURE';
 
 /**
  * 2) 액션 생성 함수 - 액션 객체를 만들어서 리턴한다.
@@ -25,7 +25,7 @@ export const searchFailureAction   = createAction(SEARCH_FAILURE);
  * 컴포넌트에서 다루고자 하는 데이터들을 포함한다.
  */
 const initialState = {
-    result: [],         // 약국목록
+    result: [],         // 장소목록
     loading: false,     // 현재 검색중인지 여부
     error: false       // 에러 발생 여부
 };
@@ -70,22 +70,23 @@ export default handleActions(
 // 컨테이너로부터 pos라는 파라미터를 전달받는다. (파라미터는 개발자가 상황에 따라 정의함)
 // 이 안에서 action함수들을 dispatch(호출)한다
 // 이렇게 정의된 함수들은 컨테이너의 props에 포함된다.
-export const maskAsync = (lat, lng) => async dispatch => {
+export const mapAsync = (place) => async dispatch => {
     // 검색을 시작했음을 알림
     dispatch(searchAction());
 
     // 검색어가 없을 경우 --> 검색결과를 0건으로 지정하여 Success를 호출한다
-    if (!lat || !lng) {
+    if (!place) {
         searchSuccessAction({ result: [] });
         return;
     }
 
     try {
-        const result = await axios.get('https://8oi9s0nnth.apigw.ntruss.com/corona19-masks/v1/storesByGeo/json', {
-            params: { lat: lat, lng: lng, m: 5000 }
+        const result = await axios.get('https://dapi.kakao.com/v2/local/search/keyword.json', {
+            params: { query: place },
+            headers: { Authorization: "KakaoAK c224c695a03e918f9e82942f5c7843a1" }
         });
-        // console.debug(result.data);
-        dispatch(searchSuccessAction({ result: result.data.stores }));
+        // console.log(result);
+        dispatch(searchSuccessAction({ result: result.data.documents }));
     } catch (e) {
         // console.error(e);
         dispatch(searchFailureAction({ error: '검색에 실패했습니다.' }));

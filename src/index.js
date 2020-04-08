@@ -13,8 +13,8 @@ import rootReducer from './modules';
 
 /** 리덕스 스토어 생성 */
 const logger = createLogger();
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(logger, ReduxThunk)));
-// const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(ReduxThunk)));
+// const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(logger, ReduxThunk)));
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(ReduxThunk)));
 
 ReactDOM.render(
   <Provider store={store}>

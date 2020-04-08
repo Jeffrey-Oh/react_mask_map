@@ -59,14 +59,14 @@ const MaskMapContainer = props => {
 
   /** Hook 기능을 통해 상태값 가져오기 */
   const { result, loading, error } = useSelector(state => {
-	  return {
-		  ...state.maskMapModule
-	  };
+      return {
+        ...state.maskMapModule
+      };
   });
 
   /** action함수를 dispatch 시키기 위한 기능 가져오기 */
   const dispatch = useDispatch();
-
+  
   /** 최초 실행 시 Ajax 연동 */
   React.useEffect( () => {
 	  dispatch(maskMapModule.maskAsync(position.lat, position.lng));
