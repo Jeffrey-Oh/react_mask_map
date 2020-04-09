@@ -75,6 +75,7 @@ display: none;
 const SearchList = styled.ul``;
 
 const SearchListItem = styled.li`
+list-style: none;
 width: 95%;
 background-color: #fff;
 padding: 10px;
@@ -88,12 +89,12 @@ background-color: rgba(255, 255, 255, 0.6);
 }
 `;
 
-function handleSearchBar() {
+function handleSearchBar(showType="0") {
   const searchInput = document.getElementById("searchInput");
   const titleSpan = document.getElementById("titleSpan");
   const searchBtn = document.getElementById("searchBtn");
 
-  if (searchInput.style.display === "block") {
+  if (searchInput.style.display === "block" || showType === "1") {
     searchInput.style.display = 'none';
     searchBtn.style.display = 'none';
     titleSpan.style.transform = "translateX(0)";
@@ -110,6 +111,7 @@ function handleSearchBar() {
 };
 
 const Header = props => {
+
   /** Hook 기능을 통해 상태값 가져오기 */
   const { result, loading, error } = useSelector(state => {
     return {
@@ -127,6 +129,10 @@ const Header = props => {
   function handleSearchBtn() {
     const placeEle = document.getElementById("searchInput");
 
+    const searchDiv = document.getElementById("searchDiv");
+    
+    searchDiv.style.display = "block";
+
     if (placeEle.value === "") {
       alert("키워드를 입력하세요");
       placeEle.focus();
@@ -136,6 +142,16 @@ const Header = props => {
     } else {
       setPlace(placeEle.value);
     }
+  }
+
+  function handleSelectMap(e, item) {
+    e.preventDefault();
+
+    const searchDiv = document.getElementById("searchDiv");
+    
+    searchDiv.style.display = "none";
+    
+    props.searchMapF(item);
   }
 
   /** 검색어 있는 경우 Ajax 연동 */
@@ -150,18 +166,11 @@ const Header = props => {
         <SearchBar id="searchInput" />
         <SearchBtn id="searchBtn" onClick={handleSearchBtn} />
       </TitleBar>
-      <SearchDiv style={{display: result.length > 0 ? 'block' : 'none'}}>
+      <SearchDiv id="searchDiv" style={{display: result.length > 0 ? 'block' : 'none'}}>
         <SearchList>
           {/** 검색결과 데이터 수 만큼 목록의 아이템을 표시함 */}
           {result.map((item, index) => {
-            return(<SearchListItem key={index} onClick={ () => {
-              props = {
-                coords : {
-                  latitude: item.y,
-                  longitude: item.x
-                }
-              }
-            }}>
+            return(<SearchListItem key={index} onClick={ (e) => handleSelectMap(e, item)}>
               {item.address_name}
             </SearchListItem>)
           })}

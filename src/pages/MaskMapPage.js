@@ -9,11 +9,29 @@ width: 100%;
 height: 100%;
 `;
 
-const MaskMapPage = () => {
+const MaskMapPage = props => {
+
+    // 위치 재설정
+    const [coords, setCoords] = React.useState();
+
+    if (coords === undefined) {
+        setCoords({
+            lat: 37.485355200868526,
+            lng: 126.89935859355552
+        })
+    }
+    
+    function handleChangePosition(position) {
+        setCoords({
+            lat: position.y,
+            lng: position.x
+        });
+    }
+
     return (
         <Container>
-            <Header />
-            <MapContainer />
+            <Header searchMapF={handleChangePosition}/>
+            <MapContainer map={coords}/>
         </Container>
     );
 };

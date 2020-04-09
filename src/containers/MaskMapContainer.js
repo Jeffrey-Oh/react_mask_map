@@ -12,7 +12,8 @@ import { geolocated } from "react-geolocated";
 /**
  * 카카오 지도 컴포넌트
  */
-import { Map, Marker, Overlay } from "kakao-map-react";
+// import { Map, Marker, Overlay } from "kakao-map-react";
+import { Map, Marker } from "kakao-map-react";
 
 // 'react-redux' 패키지에서 제공하는 hook 함수
 import { useSelector, useDispatch } from "react-redux";
@@ -27,6 +28,7 @@ const MapBox = styled.div`
 const MaskMapContainer = props => {
   // 지도에 적용할 위도, 경도값 추출
   const pos = { lat: 37.485355200868526, lng: 126.89935859355552 };
+  const mapping = { lat: Number(props.map.lat), lng: Number(props.map.lng) };
 
   const options = {
     enableHighAccuracy: true, // 높은 정확도 사용
@@ -45,17 +47,8 @@ const MaskMapContainer = props => {
     console.warn('ERROR(' + err.code + '): ' + err.message);
   };
 
-  // geolocation을 통해 위, 경도값 받기
-  if (props.coords) {
-	  pos.lat = props.coords.latitude;
-	  pos.lng = props.coords.longitude;
-  } else {
-    navigator.geolocation.getCurrentPosition(geo_success, geo_error, options);
-  }
-
   // 위치정보를 상태값으로 등록
   const [position, setPosition] = React.useState(pos);
-  const [map, setMap] = React.useState();
 
   /** Hook 기능을 통해 상태값 가져오기 */
   const { result, loading, error } = useSelector(state => {
@@ -63,6 +56,18 @@ const MaskMapContainer = props => {
         ...state.maskMapModule
       };
   });
+
+  // geolocation을 통해 위, 경도값 받기
+  if (mapping) {
+    if(position.lat !== mapping.lat && position.lng !== mapping.lng) {
+      setPosition({
+        lat : mapping.lat,
+        lng : mapping.lng
+      })
+    }
+  } else {
+    navigator.geolocation.getCurrentPosition(geo_success, geo_error, options);
+  }
 
   /** action함수를 dispatch 시키기 위한 기능 가져오기 */
   const dispatch = useDispatch();
