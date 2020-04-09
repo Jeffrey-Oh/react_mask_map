@@ -10,7 +10,6 @@ height: 100%;
 `;
 
 const MaskMapPage = props => {
-
     // 위치 재설정
     const [coords, setCoords] = React.useState();
 
@@ -24,7 +23,8 @@ const MaskMapPage = props => {
     function handleChangePosition(position) {
         setCoords({
             lat: position.y,
-            lng: position.x
+            lng: position.x,
+            type: "Y"
         });
     }
 

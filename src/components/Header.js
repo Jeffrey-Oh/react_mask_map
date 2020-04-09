@@ -67,9 +67,10 @@ width: 100%;
 height: 100%;
 overscroll: scroll;
 position: fixed;
-z-index: 2;
+z-index: 999999;
 background-color: rgba(225, 225, 225, 0.5);
 display: none;
+overflow-y: scroll;
 `;
 
 const SearchList = styled.ul``;
@@ -135,9 +136,6 @@ const Header = props => {
 
     if (placeEle.value === "") {
       alert("키워드를 입력하세요");
-      placeEle.focus();
-    } else if (placeEle.value === place) {
-      alert("검색어가 이전과 같으면 검색이 되지않습니다.");
       placeEle.focus();
     } else {
       setPlace(placeEle.value);

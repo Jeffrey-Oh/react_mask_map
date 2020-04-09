@@ -28,8 +28,8 @@ const MapBox = styled.div`
 const MaskMapContainer = props => {
   // 지도에 적용할 위도, 경도값 추출
   const pos = { lat: 37.485355200868526, lng: 126.89935859355552 };
-  const mapping = { lat: Number(props.map.lat), lng: Number(props.map.lng) };
-
+  const mapping = { lat: Number(props.map.lat), lng: Number(props.map.lng), type: "N" };
+  
   const options = {
     enableHighAccuracy: true, // 높은 정확도 사용
     maximumAge: 0, // 캐시유효시간(사용안함)
@@ -58,12 +58,20 @@ const MaskMapContainer = props => {
   });
 
   // geolocation을 통해 위, 경도값 받기
-  if (mapping) {
-    if(position.lat !== mapping.lat && position.lng !== mapping.lng) {
+  if (position) {
+    // 장소 검색인 경우 검색결과를 N으로 돌리고 현재 지도검색 타입을 Y로 바꾼다.
+    if (props.map.type === "Y") {
+      props.map.type = "N";
+      mapping.type = "Y";
+    }
+    if(mapping.type === "Y" && position.lat !== mapping.lat && position.lng !== mapping.lng) {
       setPosition({
         lat : mapping.lat,
         lng : mapping.lng
       })
+    } else {
+      pos.lat = mapping.lat;
+      pos.lng = mapping.lng;
     }
   } else {
     navigator.geolocation.getCurrentPosition(geo_success, geo_error, options);
