@@ -26,68 +26,50 @@ const MapBox = styled.div`
 `;
 
 const MaskMapContainer = props => {
-  // 지도에 적용할 위도, 경도값 추출
-  const pos = { lat: 37.485355200868526, lng: 126.89935859355552 };
-  const mapping = { lat: Number(props.map.lat), lng: Number(props.map.lng), type: "N" };
-  
-  const options = {
-    enableHighAccuracy: true, // 높은 정확도 사용
-    maximumAge: 0, // 캐시유효시간(사용안함)
-    timeout: Infinity // 타임아웃(무한대로 설정)
-  };
+  // 지도에 적용할 기본값 위도, 경도값 추출
+  const mapping = { lat: 37.485355200868526, lng: 126.89935859355552, type: "N" };
 
-  function geo_success(res_pos) {
-    const crd = res_pos.coords;
-
-    pos.lat = crd.latitude;
-    pos.lng = crd.longitude;
-  };
-
-  function geo_error(err) {
-    console.warn('ERROR(' + err.code + '): ' + err.message);
-  };
+  if (props.map !== undefined) {
+    mapping.lat = Number(props.map.lat);
+    mapping.lng = Number(props.map.lng);
+  }
 
   // 위치정보를 상태값으로 등록
-  const [position, setPosition] = React.useState(pos);
+  const [position, setPosition] = React.useState(mapping);
 
   /** Hook 기능을 통해 상태값 가져오기 */
   const { result, loading, error } = useSelector(state => {
-      return {
-        ...state.maskMapModule
-      };
+    return {
+      ...state.maskMapModule
+    };
   });
 
   // geolocation을 통해 위, 경도값 받기
-  if (position) {
+  if (mapping.lat !== undefined) {
     // 장소 검색인 경우 검색결과를 N으로 돌리고 현재 지도검색 타입을 Y로 바꾼다.
-    if (props.map.type === "Y") {
+    if (props.map !== undefined && props.map.type === "Y") {
       props.map.type = "N";
       mapping.type = "Y";
     }
-    if(mapping.type === "Y" && position.lat !== mapping.lat && position.lng !== mapping.lng) {
+    if (mapping.type === "Y" && position.lat !== mapping.lat && position.lng !== mapping.lng) {
       setPosition({
-        lat : mapping.lat,
-        lng : mapping.lng
+        lat: mapping.lat,
+        lng: mapping.lng
       })
-    } else {
-      pos.lat = mapping.lat;
-      pos.lng = mapping.lng;
     }
-  } else {
-    navigator.geolocation.getCurrentPosition(geo_success, geo_error, options);
   }
 
   /** action함수를 dispatch 시키기 위한 기능 가져오기 */
   const dispatch = useDispatch();
-  
+
   /** 최초 실행 시 Ajax 연동 */
-  React.useEffect( () => {
-	  dispatch(maskMapModule.maskAsync(position.lat, position.lng));
+  React.useEffect(() => {
+    dispatch(maskMapModule.maskAsync(position.lat, position.lng));
   }, []);
 
   /** 지도 이동 시 Ajax 연동 */
-  React.useEffect( () => {
-	  dispatch(maskMapModule.maskAsync(position.lat, position.lng));
+  React.useEffect(() => {
+    dispatch(maskMapModule.maskAsync(position.lat, position.lng));
   }, [position]);
 
   /** 위치 정보 사용 가능 여부 확인 */
@@ -105,36 +87,36 @@ const MaskMapContainer = props => {
 
   if (loading) {
     // return <h2 style={{ paddingTop: '36px', color: '#00f' }}>검색중입니다...</h2>;
-    
+
     return (
-    <MapBox>
-      <Map
-        kakaoApiKey="680ab974e5cb1353034d6d7f21f2ec44"
-        initialPosition={{
-          longitude: position.lng,
-          latitude: position.lat,
-          level: 10
-        }}
-        //지도에 표시되는 위치가 변경된 경우
-        onDragEnd={map => {
-          const center = map.getCenter();
-          setPosition({
-            lat : center.Ha,
-            lng : center.Ga
-          });
-        }}
-        center={{
-          longitude: position.lng,
-          latitude: position.lat
-        }}
-      >
-      </Map>
-    </MapBox>
+      <MapBox>
+        <Map
+          kakaoApiKey="680ab974e5cb1353034d6d7f21f2ec44"
+          initialPosition={{
+            longitude: position.lng,
+            latitude: position.lat,
+            level: 10
+          }}
+          //지도에 표시되는 위치가 변경된 경우
+          onDragEnd={map => {
+            const center = map.getCenter();
+            setPosition({
+              lat: center.Ha,
+              lng: center.Ga
+            });
+          }}
+          center={{
+            longitude: position.lng,
+            latitude: position.lat
+          }}
+        >
+        </Map>
+      </MapBox>
     )
   }
 
   if (error) {
-	  return <h2 style={{ paddingTop: '36px', color: '#f00' }}>{error}</h2>;
+    return <h2 style={{ paddingTop: '36px', color: '#f00' }}>{error}</h2>;
   }
 
   return (
@@ -150,8 +132,8 @@ const MaskMapContainer = props => {
         onDragEnd={map => {
           const center = map.getCenter();
           setPosition({
-            lat : center.Ha,
-            lng : center.Ga
+            lat: center.Ha,
+            lng: center.Ga
           });
         }}
         center={{
@@ -159,41 +141,41 @@ const MaskMapContainer = props => {
           latitude: position.lat
         }}
       >
-        
-		{/** 검색결과 데이터 수 만큼 목록의 아이템을 표시함 */}
-		{result.map((item, index) => {
-		
-			// 100개 이상(녹색): 'plenty' / 30개 이상 100개미만(노랑색): 'some' / 2개 이상 30개 미만(빨강색): 'few' / 1개 이하(회색): 'empty' / 판매중지: 'break'
-			let color = null, state = null;
 
-			switch (item.remain_stat) {
-				case 'plenty':
-					color = 'green';
-					state = '100개 이상';
-					break;
-				case 'some':
-					color = 'yellow';
-					state = '30개 이상 100개 미만';
-					break;
-				case 'few':
-					color = 'red';
-					state = '2개 이상 30개 미만';
-					break;
-				case 'empty':
-					color = 'grey';
-					state = '1개 이하';
-					break;
-				default:
-					color = 'black';
-					state = '판매중단';
-			}
+        {/** 검색결과 데이터 수 만큼 목록의 아이템을 표시함 */}
+        {result.map((item, index) => {
 
-			return(<Marker key={index}
-					longitude={item.lng}
-					latitude={item.lat}
-					onClick={() => { alert(`${item.name} / ${state}`); }}
-				/>);
-		})}
+          // 100개 이상(녹색): 'plenty' / 30개 이상 100개미만(노랑색): 'some' / 2개 이상 30개 미만(빨강색): 'few' / 1개 이하(회색): 'empty' / 판매중지: 'break'
+          let color = null, state = null;
+
+          switch (item.remain_stat) {
+            case 'plenty':
+              color = 'green';
+              state = '100개 이상';
+              break;
+            case 'some':
+              color = 'yellow';
+              state = '30개 이상 100개 미만';
+              break;
+            case 'few':
+              color = 'red';
+              state = '2개 이상 30개 미만';
+              break;
+            case 'empty':
+              color = 'grey';
+              state = '1개 이하';
+              break;
+            default:
+              color = 'black';
+              state = '판매중단';
+          }
+
+          return (<Marker key={index}
+            longitude={item.lng}
+            latitude={item.lat}
+            onClick={() => { alert(`${item.name} / ${state}`); }}
+          />);
+        })}
       </Map>
     </MapBox>
   );

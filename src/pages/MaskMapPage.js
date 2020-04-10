@@ -13,13 +13,30 @@ const MaskMapPage = props => {
     // 위치 재설정
     const [coords, setCoords] = React.useState();
 
-    if (coords === undefined) {
+    const options = {
+        enableHighAccuracy: true, // 높은 정확도 사용
+        maximumAge: 0, // 캐시유효시간(사용안함)
+        timeout: Infinity // 타임아웃(무한대로 설정)
+    };
+
+    function geo_success(res_pos) {
+        const crd = res_pos.coords;
+
         setCoords({
-            lat: 37.485355200868526,
-            lng: 126.89935859355552
+            lat: crd.latitude,
+            lng: crd.longitude,
+            type: "N"
         })
+    };
+
+    function geo_error(err) {
+        console.warn('ERROR(' + err.code + '): ' + err.message);
+    };
+
+    if (coords === undefined) {
+        navigator.geolocation.getCurrentPosition(geo_success, geo_error, options);
     }
-    
+
     function handleChangePosition(position) {
         setCoords({
             lat: position.y,
@@ -30,8 +47,8 @@ const MaskMapPage = props => {
 
     return (
         <Container>
-            <Header searchMapF={handleChangePosition}/>
-            <MapContainer map={coords}/>
+            <Header searchMapF={handleChangePosition} />
+            <MapContainer map={coords} />
         </Container>
     );
 };
